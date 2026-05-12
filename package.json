@@ -1,0 +1,23 @@
+{
+
+  "name": "github-actions-lab",
+
+  "version": "1.0.0",
+
+    "description": "CI lab using GitHub Actions",
+
+    "main": "app.js",
+
+    "scripts": {
+
+      "test": "jest"
+
+    },
+
+    "devDependencies": {
+
+      "jest": "^29.0.0"
+
+    }
+
+}
