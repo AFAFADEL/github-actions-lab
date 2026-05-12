@@ -210,3 +210,138 @@ After pushing code:
 
 <img width="2355" height="871" alt="image" src="https://github.com/user-attachments/assets/d966732b-0a7f-4b11-b768-737c21d4b1ff" />
 <img width="1895" height="1101" alt="image" src="https://github.com/user-attachments/assets/38269f63-18fb-4574-bb15-89d7ae70185c" />
+-----------------------
+# GitHub Actions Lab 3 🔐☁️
+
+This lab demonstrates how to securely use **GitHub Secrets** with AWS credentials in GitHub Actions workflows.
+
+---
+
+## 📌 Objective
+
+- Store AWS credentials securely in GitHub Secrets
+- Use secrets inside GitHub Actions workflow
+- Verify AWS authentication using `sts get-caller-identity`
+- Ensure secrets are masked in logs (`***`)
+
+---
+
+## 🔐 GitHub Secrets Setup
+
+Go to:
+
+```
+Settings → Secrets and variables → Actions → New repository secret
+```
+
+Add the following secrets:
+
+| Secret Name | Description |
+|-------------|-------------|
+| AWS_ACCESS_KEY_ID | AWS IAM Access Key |
+| AWS_SECRET_ACCESS_KEY | AWS IAM Secret Key |
+| AWS_REGION | AWS region (e.g. us-east-1) |
+
+---
+
+## ⚙️ Workflow File
+
+File: `.github/workflows/secrets.yml`
+
+```yaml
+name: Deploy with Secrets
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Run tests
+        run: |
+          npm install
+          npm test
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Verify AWS access
+        run: aws sts get-caller-identity
+```
+
+---
+
+## 🧪 What Happens in This Lab
+
+### 1. Code is pushed to GitHub
+Workflow starts automatically.
+
+### 2. GitHub Actions Runner starts
+Uses `ubuntu-latest` environment.
+
+### 3. AWS Credentials are injected securely
+From GitHub Secrets.
+
+### 4. AWS CLI command runs
+
+```bash
+aws sts get-caller-identity
+```
+
+This verifies authentication.
+
+---
+
+## 🔒 Security Feature
+
+GitHub automatically masks secrets in logs:
+
+```text
+***
+```
+
+✔ Secrets are never visible  
+✔ Secure CI/CD practice
+
+---
+
+## 🛠️ Technologies Used
+
+- GitHub Actions
+- GitHub Secrets
+- AWS IAM
+- Node.js
+- Jest
+
+---
+
+## 📷 Expected Output
+
+If successful:
+
+```json
+{
+  "UserId": "AIDXXXXXX",
+  "Account": "123456789012",
+  "Arn": "arn:aws:iam::123456789012:user/..."
+}
+```
+---
+
+<img width="2464" height="1235" alt="image" src="https://github.com/user-attachments/assets/1bac94d0-52d7-49d1-8273-74313c1403e7" />
+
